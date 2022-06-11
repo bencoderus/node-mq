@@ -1,7 +1,0 @@
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: node-mq-config
-data:
-  RABBITMQ_USERNAME: webdev
-  RABBITMQ_PASSWORD: webdev

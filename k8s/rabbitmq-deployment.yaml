@@ -17,13 +17,13 @@ spec:
         env:
           - name: RABBITMQ_DEFAULT_USER
             valueFrom:
-              configMapKeyRef:
-                name: node-mq-config
+              secretKeyRef:
+                name: node-mq-secret
                 key: RABBITMQ_USERNAME
           - name: RABBITMQ_DEFAULT_PASS
             valueFrom:
-              configMapKeyRef:
-                name: node-mq-config
+              secretKeyRef:
+                name: node-mq-secret
                 key: RABBITMQ_PASSWORD
         resources:
           limits:

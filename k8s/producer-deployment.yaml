@@ -19,13 +19,13 @@ spec:
         env:
           - name: RABBITMQ_USERNAME
             valueFrom:
-              configMapKeyRef:
-                name: node-mq-config
+              secretKeyRef:
+                name: node-mq-secret
                 key: RABBITMQ_USERNAME
           - name: RABBITMQ_PASSWORD
             valueFrom:
-              configMapKeyRef:
-                name: node-mq-config
+              secretKeyRef:
+                name: node-mq-secret
                 key: RABBITMQ_PASSWORD
           - name: RABBITMQ_HOST
             value: node-mq-rabbitmq-service
