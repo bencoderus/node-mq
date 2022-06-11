@@ -1,0 +1,19 @@
+apiVersion: skaffold/v2beta28
+kind: Config
+metadata:
+  name: node-mq-development
+build:
+  tagPolicy:
+    sha256: {}
+  local:
+    push: false
+  artifacts:
+  - image: bencoderus/node-mq
+    context: .
+    sync:
+      infer:
+      - '**/*'
+deploy:
+  kubectl:
+    manifests:
+    - "k8s/*.yaml"

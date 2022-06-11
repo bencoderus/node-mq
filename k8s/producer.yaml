@@ -34,7 +34,7 @@ spec:
         resources:
           limits:
             memory: "512Mi"
-            cpu: "200m"
+            cpu: "100m"
         command:
         - yarn
         - run

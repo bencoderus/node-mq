@@ -1,9 +1,11 @@
 {
   "name": "node-mq",
   "version": "1.0.0",
+  "description": "Using NodeJS and RabbitMQ on a Kubernetes cluster.",
   "main": "index.js",
   "license": "MIT",
   "scripts": {
+    "build": "tsc .",
     "start": "nodemon --exec ts-node src/app.ts",
     "consume": "nodemon --exec ts-node src/consumer.ts"
   },

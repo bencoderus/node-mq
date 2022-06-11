@@ -14,13 +14,10 @@ export class RabbitMqConnection {
 
   static getConnection() {
     if (!RabbitMqConnection.connection) {
-      console.log("I'm creating a new instance");
-
       const connectionManager = new RabbitMqConnection();
       RabbitMqConnection.connection = connectionManager.connect();
     }
 
-    console.log("I'm using the old instance.");
     return RabbitMqConnection.connection;
   }
 

@@ -17,18 +17,18 @@ app.post("/send", async (req: Request, res: Response) => {
 
   await queue.publish(body);
 
-  res.send("Message sent.");
+  res.send("Message sent to consumer.");
 });
 
 app.get("/publish", async (req: Request, res: Response) => {
   const queue = MessageQueue.getQueue(channels.NOTIFICATION_QUEUE);
 
-  const sent = await queue.publish({
+  await queue.publish({
     message: "Hello World!",
     eventName: "notification:sent",
   });
 
-  res.send("Message sent");
+  res.send("Message sent to consumers of the queue.");
 });
 
 app.listen(3000, () => {
