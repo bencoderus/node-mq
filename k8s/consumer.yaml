@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: node-mq-consumer-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: node-mq-consumer
+  template:
+    metadata:
+      labels:
+        app: node-mq-consumer
+    spec:
+      containers:
+      - name: node-mq-consumer
+        imagePullPolicy: Never
+        image: bencoderus/node-mq
+        env:
+          - name: RABBITMQ_USERNAME
+            valueFrom:
+              configMapKeyRef:
+                name: node-mq-config
+                key: RABBITMQ_USERNAME
+          - name: RABBITMQ_PASSWORD
+            valueFrom:
+              configMapKeyRef:
+                name: node-mq-config
+                key: RABBITMQ_PASSWORD
+          - name: RABBITMQ_HOST
+            value: node-mq-rabbitmq-service
+          - name: RABBITMQ_PORT
+            value: "5672"
+        command:
+        - yarn
+        - run
+        - consume
+        resources:
+          limits:
+            memory: "512Mi"
+            cpu: "100m"

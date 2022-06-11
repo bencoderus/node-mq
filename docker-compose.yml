@@ -1,0 +1,62 @@
+version: '3.9'
+
+services:
+  producer:
+    container_name: producer
+    build: .
+    image: bencoderus/node-mq
+    ports:
+      - "3000:3000"
+    environment:
+      - RABBITMQ_HOST=rabbitmq
+      - RABBITMQ_PORT=5672
+      - RABBITMQ_USERNAME=webdev
+      - RABBITMQ_PASSWORD=webdev
+    command:
+      - "yarn"
+      - "run"
+      - "start"
+    volumes:
+      - ./:/app
+    networks:
+      - node-mq-net
+
+  consumer:
+    container_name: consumer
+    build: .
+    image: bencoderus/node-mq
+    environment:
+      - RABBITMQ_HOST=rabbitmq
+      - RABBITMQ_PORT=5672
+      - RABBITMQ_USERNAME=webdev
+      - RABBITMQ_PASSWORD=webdev
+    command:
+      - "yarn"
+      - "run"
+      - "consume"
+    volumes:
+      - ./:/app
+    networks:
+      - node-mq-net
+
+  rabbitmq:
+    container_name: rabbitmq
+    image: rabbitmq:3.10.5-management-alpine
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    environment:
+      - RABBITMQ_DEFAULT_USER=webdev
+      - RABBITMQ_DEFAULT_PASS=webdev
+    networks:
+      - node-mq-net
+    volumes:
+      - rabbit-mq-data:/var/lib/rabbitmq
+
+volumes:
+  rabbit-mq-data:
+
+
+networks:
+  node-mq-net:
+    driver: bridge
