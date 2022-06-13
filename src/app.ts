@@ -31,6 +31,18 @@ app.get("/publish", async (req: Request, res: Response) => {
   res.send("Message sent to consumers of the queue.");
 });
 
+app.get("/email", async (req: Request, res: Response) => {
+  const queue = MessageQueue.getQueue(channels.EMAIL_QUEUE);
+
+  await queue.publish({
+    subject: "Hello Benjamin",
+    body: "Hello Benjamin, I just sent a mail.",
+    eventName: "email:sent",
+  });
+
+  res.send("Email sent to consumers of the queue.");
+});
+
 app.listen(3000, () => {
   RabbitMqConnection.getConnection();
   console.log("Connected to HTTP server!");
