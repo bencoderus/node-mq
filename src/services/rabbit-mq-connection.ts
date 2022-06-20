@@ -9,7 +9,9 @@ export class RabbitMqConnection {
     host: string,
     port = 5672
   ) {
-    return `amqp://${username}:${password}@${host}:${port}`;
+    const connectUrl = `amqp://${username}:${password}@${host}:${port}`;
+
+    return connectUrl;
   }
 
   static getConnection() {
@@ -23,8 +25,8 @@ export class RabbitMqConnection {
 
   connect() {
     const connectionUrl = this.createConnectionUrl(
-      process.env.RABBITMQ_USERNAME || "guest",
-      process.env.RABBITMQ_PASSWORD || "",
+      process.env.RABBITMQ_USERNAME || "webdev",
+      process.env.RABBITMQ_PASSWORD || "webdev",
       process.env.RABBITMQ_HOST || "localhost",
       parseInt(process.env.RABBITMQ_PORT || "5672", 10)
     );

@@ -1,14 +1,26 @@
-import { ConsumeMessage } from "amqplib";
 import { channels } from "./constants/channels.constant";
-import { MessageQueue } from "./services/rabbit-queue";
+import { ClientQueueListener } from "./services/listeners/client.listener";
+import { EmailQueueListener } from "./services/listeners/email.listener";
+import { NotificationQueueListener } from "./services/listeners/notification.listener";
+import { RabbitMqConnection } from "./services/rabbit-mq-connection";
+import { RabbitMqClient } from "./services/rabbitmq-client";
 
-for (let key in channels) {
-  const channelName = channels[key];
-  const queue = MessageQueue.getQueue(channelName);
+const connection = RabbitMqConnection.getConnection();
 
-  queue.consume(async (message: ConsumeMessage) => {
-    console.log(`Received message on ${channelName}.`);
-    console.log(message.content.toString());
-    queue.ack(message);
-  });
-}
+connection.on("disconnect", () => {
+  console.log("Disconnected from RabbitMQ.");
+  process.exit(0);
+});
+
+connection.on("close", () => {
+  console.log("Disconnected from RabbitMQ.");
+  process.exit(0);
+});
+
+const emailQueue = new EmailQueueListener();
+const notificationQueue = new NotificationQueueListener();
+const clientQueue = new ClientQueueListener();
+
+emailQueue.listen();
+notificationQueue.listen();
+clientQueue.listen();
