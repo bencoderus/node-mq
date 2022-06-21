@@ -2,20 +2,19 @@ import { IAmqpConnectionManager } from "amqp-connection-manager/dist/esm/AmqpCon
 import { RabbitMqConnection } from "../rabbit-mq-connection";
 import { BaseEvent } from "./base.event";
 
-type EmailPayload = {
-  to: string;
-  subject: string;
-  body: string;
+type ClientPayload = {
+  id: number | string;
+  name: string;
 };
 
-export class EmailSent extends BaseEvent {
+export class ClientCreated extends BaseEvent {
   public event = "client-created";
-  public queue = "client-queue";
+  public exchange = "lagos";
 
-  public async publish(message: EmailPayload): Promise<void> {
+  public async publish(message: ClientPayload): Promise<void> {
     const payload = this.buildPayload(message);
 
-    await this.getChannel().publish(payload);
+    await this.emit(payload);
   }
 
   protected connection(): IAmqpConnectionManager {

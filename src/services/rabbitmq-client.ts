@@ -6,7 +6,8 @@ export class RabbitMqClient {
   private connection: AmqpConnectionManager;
   private channel: ChannelWrapper;
   private exchange: string;
-  private exchangeType: string;
+  private exchanges: string[];
+  private exchangeType = "topic";
   private queue: string;
 
   constructor(connection: AmqpConnectionManager) {
@@ -26,7 +27,29 @@ export class RabbitMqClient {
     return this;
   }
 
-  private createDefaultChannelPayload() {
+  public setExchanges(exchanges: string[], exchangeType = "topic"): this {
+    this.exchanges = exchanges;
+    this.exchangeType = exchangeType;
+
+    return this;
+  }
+
+  private createPublisherPayload() {
+    return this.exchange
+      ? this.createPubSubPublisherPayload()
+      : this.createSenderPublisherPayload();
+  }
+
+  private createPubSubPublisherPayload() {
+    return {
+      json: true,
+      setup: (channel: any) => {
+        return channel.assertExchange(this.exchange, this.exchangeType);
+      },
+    };
+  }
+
+  private createSenderPublisherPayload() {
     return {
       json: true,
       setup: (channel: any) => {
@@ -35,38 +58,88 @@ export class RabbitMqClient {
     };
   }
 
-  private getChannelPayload() {
-    return this.exchange
-      ? this.createExchangeChannelPayload()
-      : this.createDefaultChannelPayload();
+  private getConsumerPayload() {
+    return this.exchanges
+      ? this.createPubSubConsumerPayload()
+      : this.createReceiverConsumerPayload();
   }
 
-  private createExchangeChannelPayload() {
+  private createReceiverConsumerPayload() {
+    if (!this.queue) {
+      throw new Error("Please set your queue first");
+    }
+
     return {
-      json: true,
-      setup: (channel) => {
+      setup: (channel: any) => {
         return Promise.all([
-          channel.assertQueue(this.queue, {
-            exclusive: true,
-            autoDelete: true,
-          }),
-          channel.assertExchange(this.exchange, this.exchangeType),
+          channel.assertQueue(this.queue, { durable: true }),
           channel.prefetch(1),
-          channel.bindQueue(this.queue, this.exchange, "#"),
         ]);
       },
     };
   }
 
-  public publish(message: unknown, options?: PublishOptions) {
-    this.channel = this.connection.createChannel(this.getChannelPayload());
-    const medium = this.exchange ? this.exchange : this.queue;
+  private createPubSubConsumerPayload() {
+    if (!(this.queue && this.exchanges && this.exchanges.length > 0)) {
+      throw new Error(
+        "Please set your queue and exchanges to use the PubSub consumer."
+      );
+    }
 
-    return this.channel.sendToQueue(medium, message, options);
+    return {
+      json: true,
+      setup: (channel) => {
+        return Promise.all(
+          this.buildExchangeBinding(channel, this.queue, this.exchangeType)
+        );
+      },
+    };
+  }
+
+  private buildExchangeBinding(channel, queue: string, exchangeType: string) {
+    const bindings = [];
+
+    this.exchanges.forEach(function (exchange) {
+      bindings.push(channel.assertQueue(queue));
+
+      bindings.push(channel.assertExchange(exchange, exchangeType));
+
+      bindings.push(channel.prefetch(1));
+
+      bindings.push(channel.bindQueue(queue, exchange, "#"));
+    });
+
+    return bindings;
+  }
+
+  public publish(message: unknown, options?: PublishOptions) {
+    this.channel = this.connection.createChannel(this.createPublisherPayload());
+
+    console.log(this.exchange, message);
+
+    if (this.exchange) {
+      return this.publishToExchange(message, options);
+    }
+
+    return this.publishToQueue(message, options);
+  }
+
+  public publishToQueue(message: unknown, options?: PublishOptions) {
+    this.channel = this.connection.createChannel(
+      this.createSenderPublisherPayload()
+    );
+
+    return this.channel.sendToQueue(this.queue, message, options);
+  }
+
+  public publishToExchange(message: unknown, options?: PublishOptions) {
+    this.channel = this.connection.createChannel(this.createPublisherPayload());
+
+    return this.channel.publish(this.exchange, "#", message, options);
   }
 
   public consume(callback: (message: ConsumeMessage) => void) {
-    this.channel = this.connection.createChannel(this.getChannelPayload());
+    this.channel = this.connection.createChannel(this.getConsumerPayload());
 
     return this.channel.consume(this.queue, callback);
   }

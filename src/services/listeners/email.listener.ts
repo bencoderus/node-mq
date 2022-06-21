@@ -1,5 +1,7 @@
 import { IAmqpConnectionManager } from "amqp-connection-manager/dist/esm/AmqpConnectionManager";
+import { ConsumeMessage } from "amqplib";
 import { RabbitMqConnection } from "../rabbit-mq-connection";
+import { RMQMessage } from "../rabbitmq-message";
 import { BaseListener } from "./base.listener";
 
 export class EmailQueueListener extends BaseListener {
@@ -8,12 +10,12 @@ export class EmailQueueListener extends BaseListener {
   public listen() {
     const channel = this.getChannel();
 
-    channel.consume((message) => {
-      const { event, payload } = this.getMessageBody(message);
+    channel.consume((consumeMessage: ConsumeMessage) => {
+      const messageReceived = new RMQMessage(consumeMessage);
 
-      console.log(event, payload);
+      console.log(messageReceived.event(), messageReceived.payload());
 
-      channel.ack(message);
+      channel.ack(consumeMessage);
     });
   }
 

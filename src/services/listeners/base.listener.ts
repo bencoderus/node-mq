@@ -1,4 +1,3 @@
-import { ChannelWrapper } from "amqp-connection-manager";
 import { IAmqpConnectionManager } from "amqp-connection-manager/dist/esm/AmqpConnectionManager";
 import { ConsumeMessage } from "amqplib";
 import { RabbitMqClient } from "../rabbitmq-client";
@@ -10,17 +9,13 @@ type MessageBody = {
 
 export abstract class BaseListener {
   public abstract queue: string;
-  protected exchange: string;
+  protected exchanges: string[];
   private _connection: IAmqpConnectionManager;
 
   public abstract listen(callback: (message: ConsumeMessage) => void): void;
 
   protected getMessageBody(message: ConsumeMessage): MessageBody {
     return JSON.parse(message.content.toString());
-  }
-
-  protected getEventName(message: MessageBody): string {
-    return message.event || "";
   }
 
   public setConnection(connection: IAmqpConnectionManager) {
@@ -43,7 +38,9 @@ export abstract class BaseListener {
     const connection = this.getConnection();
     let messageBroker = new RabbitMqClient(connection);
 
-    console.log("queue is: ", this.queue);
+    if(Array.isArray(this.exchanges) && this.exchanges.length > 0){
+      messageBroker.setExchanges(this.exchanges)
+    }
 
     return messageBroker.setQueue(this.queue);
   }

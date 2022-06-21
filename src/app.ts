@@ -4,6 +4,7 @@ import { RabbitMqConnection } from "./services/rabbit-mq-connection";
 import * as util from "util";
 import { EmailSent } from "./services/events/email-sent.event";
 import { NotificationSent } from "./services/events/notification.event";
+import { ClientCreated } from "./services/events/client-created.event";
 const app = express();
 
 app.use(express.json());
@@ -12,10 +13,21 @@ app.get("/hello", (req: Request, res: Response) => {
   res.send("Hello World!");
 });
 
+app.get("/broadcast", async (req: Request, res: Response) => {
+  const event = new ClientCreated();
+
+  await event.publish({
+    id: 1,
+    name: "Biduwe",
+  });
+
+  res.send("Message broad-casted to queues!");
+});
+
 app.get("/publish", async (req: Request, res: Response) => {
   const event = new NotificationSent();
 
-  event.publish({
+  await event.publish({
     message: "Hello World!",
   });
 

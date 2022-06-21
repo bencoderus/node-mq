@@ -13,7 +13,7 @@ export class NotificationSent extends BaseEvent {
   public async publish(message: NotificationPayload): Promise<void> {
     const payload = this.buildPayload(message);
 
-    await this.getChannel().publish(payload);
+    await this.emit(payload);
   }
 
   protected connection(): IAmqpConnectionManager {
