@@ -2,7 +2,7 @@ import { AmqpConnectionManager, ChannelWrapper } from "amqp-connection-manager";
 import { ConsumeMessage } from "amqplib";
 import { PublishOptions } from "amqp-connection-manager/dist/esm/ChannelWrapper";
 
-export class RabbitMqClient {
+export class RMQClient {
   private connection: AmqpConnectionManager;
   private channel: ChannelWrapper;
   private exchange: string;
@@ -114,8 +114,6 @@ export class RabbitMqClient {
 
   public publish(message: unknown, options?: PublishOptions) {
     this.channel = this.connection.createChannel(this.createPublisherPayload());
-
-    console.log(this.exchange, message);
 
     if (this.exchange) {
       return this.publishToExchange(message, options);

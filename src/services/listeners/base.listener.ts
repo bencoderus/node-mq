@@ -1,6 +1,6 @@
 import { IAmqpConnectionManager } from "amqp-connection-manager/dist/esm/AmqpConnectionManager";
 import { ConsumeMessage } from "amqplib";
-import { RabbitMqClient } from "../rabbitmq-client";
+import { RMQClient } from "../rabbitmq-client";
 
 type MessageBody = {
   event: string;
@@ -34,12 +34,12 @@ export abstract class BaseListener {
     return connection;
   }
 
-  protected getChannel(): RabbitMqClient {
+  protected getChannel(): RMQClient {
     const connection = this.getConnection();
-    let messageBroker = new RabbitMqClient(connection);
+    let messageBroker = new RMQClient(connection);
 
-    if(Array.isArray(this.exchanges) && this.exchanges.length > 0){
-      messageBroker.setExchanges(this.exchanges)
+    if (Array.isArray(this.exchanges) && this.exchanges.length > 0) {
+      messageBroker.setExchanges(this.exchanges);
     }
 
     return messageBroker.setQueue(this.queue);

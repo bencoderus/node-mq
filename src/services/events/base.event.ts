@@ -1,11 +1,11 @@
 import { IAmqpConnectionManager } from "amqp-connection-manager/dist/esm/AmqpConnectionManager";
 import { PublishOptions } from "amqp-connection-manager/dist/esm/ChannelWrapper";
-import { RabbitMqClient } from "../rabbitmq-client";
+import { RMQClient } from "../rabbitmq-client";
 
 type PublisherPayload = {
   event: string;
   payload: string;
-}
+};
 
 export abstract class BaseEvent {
   protected abstract event: string;
@@ -18,7 +18,7 @@ export abstract class BaseEvent {
     options?: PublishOptions
   ): Promise<void>;
 
-  public async emit(body: PublisherPayload){
+  public async emit(body: PublisherPayload) {
     await this.getChannel().publish(body);
 
     return body;
@@ -42,7 +42,7 @@ export abstract class BaseEvent {
 
   public getChannel() {
     const connection = this.getConnection();
-    let messageBroker = new RabbitMqClient(connection);
+    let messageBroker = new RMQClient(connection);
 
     if (this.exchange) {
       messageBroker.setExchange(this.exchange);

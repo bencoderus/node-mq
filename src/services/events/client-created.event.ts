@@ -1,5 +1,5 @@
 import { IAmqpConnectionManager } from "amqp-connection-manager/dist/esm/AmqpConnectionManager";
-import { RabbitMqConnection } from "../rabbit-mq-connection";
+import { RMQConnection } from "../rabbitmq-connection";
 import { BaseEvent } from "./base.event";
 
 type ClientPayload = {
@@ -18,6 +18,6 @@ export class ClientCreated extends BaseEvent {
   }
 
   protected connection(): IAmqpConnectionManager {
-    return RabbitMqConnection.getConnection();
+    return RMQConnection.getConnection();
   }
 }

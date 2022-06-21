@@ -1,6 +1,6 @@
 import amqp, { AmqpConnectionManager } from "amqp-connection-manager";
 
-export class RabbitMqConnection {
+export class RMQConnection {
   private static connection: AmqpConnectionManager;
 
   createConnectionUrl(
@@ -15,12 +15,12 @@ export class RabbitMqConnection {
   }
 
   static getConnection() {
-    if (!RabbitMqConnection.connection) {
-      const connectionManager = new RabbitMqConnection();
-      RabbitMqConnection.connection = connectionManager.connect();
+    if (!RMQConnection.connection) {
+      const connectionManager = new RMQConnection();
+      RMQConnection.connection = connectionManager.connect();
     }
 
-    return RabbitMqConnection.connection;
+    return RMQConnection.connection;
   }
 
   connect() {

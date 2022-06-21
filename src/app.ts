@@ -1,10 +1,10 @@
 import * as express from "express";
 import { Request, Response } from "express";
-import { RabbitMqConnection } from "./services/rabbit-mq-connection";
-import * as util from "util";
+import { RMQConnection } from "./services/rabbitmq-connection";
 import { EmailSent } from "./services/events/email-sent.event";
 import { NotificationSent } from "./services/events/notification.event";
 import { ClientCreated } from "./services/events/client-created.event";
+import { TradeExecuted } from "./services/events/trade-executed.event";
 const app = express();
 
 app.use(express.json());
@@ -19,6 +19,17 @@ app.get("/broadcast", async (req: Request, res: Response) => {
   await event.publish({
     id: 1,
     name: "Biduwe",
+  });
+
+  res.send("Message broad-casted to queues!");
+});
+
+app.get("/trade", async (req: Request, res: Response) => {
+  const event = new TradeExecuted();
+
+  await event.publish({
+    id: 1,
+    name: "Traders Inc",
   });
 
   res.send("Message broad-casted to queues!");
@@ -47,7 +58,7 @@ app.get("/email", async (req: Request, res: Response) => {
 });
 
 app.listen(3000, () => {
-  const connection = RabbitMqConnection.getConnection();
+  const connection = RMQConnection.getConnection();
 
   connection.on("disconnect", () => {
     console.log("Disconnected from RabbitMQ.");

@@ -1,6 +1,6 @@
 import { IAmqpConnectionManager } from "amqp-connection-manager/dist/esm/AmqpConnectionManager";
 import { ConsumeMessage } from "amqplib";
-import { RabbitMqConnection } from "../rabbit-mq-connection";
+import { RMQConnection } from "../rabbitmq-connection";
 import { RMQMessage } from "../rabbitmq-message";
 import { BaseListener } from "./base.listener";
 
@@ -20,6 +20,6 @@ export class EmailQueueListener extends BaseListener {
   }
 
   protected connection(): IAmqpConnectionManager {
-    return RabbitMqConnection.getConnection();
+    return RMQConnection.getConnection();
   }
 }

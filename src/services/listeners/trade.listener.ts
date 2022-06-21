@@ -4,8 +4,8 @@ import { RMQConnection } from "../rabbitmq-connection";
 import { RMQMessage } from "../rabbitmq-message";
 import { BaseListener } from "./base.listener";
 
-export class NotificationQueueListener extends BaseListener {
-  public queue = "notification-queue";
+export class TradeQueueListener extends BaseListener {
+  public queue = "trade-queue";
   public exchanges = ["lagos", "rio"];
 
   public listen() {
