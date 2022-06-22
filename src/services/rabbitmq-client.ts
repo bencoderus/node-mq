@@ -34,6 +34,40 @@ export class RMQClient {
     return this;
   }
 
+  public publish(message: unknown, options?: PublishOptions) {
+    this.channel = this.connection.createChannel(this.createPublisherPayload());
+
+    if (this.exchange) {
+      return this.publishToExchange(message, options);
+    }
+
+    return this.publishToQueue(message, options);
+  }
+
+  public publishToQueue(message: unknown, options?: PublishOptions) {
+    this.channel = this.connection.createChannel(
+      this.createSenderPublisherPayload()
+    );
+
+    return this.channel.sendToQueue(this.queue, message, options);
+  }
+
+  public publishToExchange(message: unknown, options?: PublishOptions) {
+    this.channel = this.connection.createChannel(this.createPublisherPayload());
+
+    return this.channel.publish(this.exchange, "#", message, options);
+  }
+
+  public consume(callback: (message: ConsumeMessage) => void) {
+    this.channel = this.connection.createChannel(this.getConsumerPayload());
+
+    return this.channel.consume(this.queue, callback);
+  }
+
+  public ack(message: ConsumeMessage) {
+    this.channel.ack(message);
+  }
+
   private createPublisherPayload() {
     return this.exchange
       ? this.createPubSubPublisherPayload()
@@ -110,39 +144,5 @@ export class RMQClient {
     });
 
     return bindings;
-  }
-
-  public publish(message: unknown, options?: PublishOptions) {
-    this.channel = this.connection.createChannel(this.createPublisherPayload());
-
-    if (this.exchange) {
-      return this.publishToExchange(message, options);
-    }
-
-    return this.publishToQueue(message, options);
-  }
-
-  public publishToQueue(message: unknown, options?: PublishOptions) {
-    this.channel = this.connection.createChannel(
-      this.createSenderPublisherPayload()
-    );
-
-    return this.channel.sendToQueue(this.queue, message, options);
-  }
-
-  public publishToExchange(message: unknown, options?: PublishOptions) {
-    this.channel = this.connection.createChannel(this.createPublisherPayload());
-
-    return this.channel.publish(this.exchange, "#", message, options);
-  }
-
-  public consume(callback: (message: ConsumeMessage) => void) {
-    this.channel = this.connection.createChannel(this.getConsumerPayload());
-
-    return this.channel.consume(this.queue, callback);
-  }
-
-  public ack(message: ConsumeMessage) {
-    this.channel.ack(message);
   }
 }

@@ -2,11 +2,6 @@ import { IAmqpConnectionManager } from "amqp-connection-manager/dist/esm/AmqpCon
 import { ConsumeMessage } from "amqplib";
 import { RMQClient } from "../rabbitmq-client";
 
-type MessageBody = {
-  event: string;
-  payload: unknown;
-};
-
 export abstract class BaseListener {
   public abstract queue: string;
   protected exchanges: string[];
@@ -14,24 +9,10 @@ export abstract class BaseListener {
 
   public abstract listen(callback: (message: ConsumeMessage) => void): void;
 
-  protected getMessageBody(message: ConsumeMessage): MessageBody {
-    return JSON.parse(message.content.toString());
-  }
-
   public setConnection(connection: IAmqpConnectionManager) {
     this._connection = connection;
 
     return this;
-  }
-
-  private getConnection(): IAmqpConnectionManager {
-    const connection = this._connection || this["connection"]();
-
-    if (!connection) {
-      throw new Error("Connection is not set");
-    }
-
-    return connection;
   }
 
   protected getChannel(): RMQClient {
@@ -43,5 +24,15 @@ export abstract class BaseListener {
     }
 
     return messageBroker.setQueue(this.queue);
+  }
+
+  private getConnection(): IAmqpConnectionManager {
+    const connection = this._connection || this["connection"]();
+
+    if (!connection) {
+      throw new Error("Connection is not set");
+    }
+
+    return connection;
   }
 }
