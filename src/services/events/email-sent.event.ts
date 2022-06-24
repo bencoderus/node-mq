@@ -1,6 +1,4 @@
-import { IAmqpConnectionManager } from "amqp-connection-manager/dist/esm/AmqpConnectionManager";
-import { RMQConnection } from "../rabbitmq-connection";
-import { BaseEvent } from "./base.event";
+import { RMQEvent } from "./base.event";
 
 type EmailPayload = {
   to: string;
@@ -8,7 +6,7 @@ type EmailPayload = {
   body: string;
 };
 
-export class EmailSent extends BaseEvent {
+export class EmailSent extends RMQEvent {
   public event = "email-sent";
   public queue = "email-queue";
 
@@ -16,9 +14,5 @@ export class EmailSent extends BaseEvent {
     const payload = this.buildPayload(message);
 
     await this.emit(payload);
-  }
-
-  protected connection(): IAmqpConnectionManager {
-    return RMQConnection.getConnection();
   }
 }

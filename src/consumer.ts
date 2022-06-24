@@ -1,27 +1,30 @@
-import {ClientQueueListener} from "./services/listeners/client.listener";
-import {EmailQueueListener} from "./services/listeners/email.listener";
-import {NotificationQueueListener} from "./services/listeners/notification.listener";
-import {TradeQueueListener} from "./services/listeners/trade.listener";
-import {RMQConnection} from "./services/rabbitmq-connection";
+import { ClientConsumer } from "./services/listeners/client.consumer";
+import { EmailConsumer } from "./services/listeners/email.consumer";
+import { NotificationConsumer } from "./services/listeners/notification.consumer";
+import { TradeConsumer } from "./services/listeners/trade.consumer";
+import { RMQConnect } from "./services/rabbit-mq.connect";
 
-const connection = RMQConnection.getConnection();
-
-connection.on("disconnect", () => {
-    console.log("Disconnected from RabbitMQ.");
+async function main() {
+  try {
+    const connection = await RMQConnect.connect({
+      username: "webdev",
+      password: "webdev",
+    });
+  } catch (error) {
+    console.log(error);
     process.exit(0);
-});
+  }
+  console.log("Waiting for message");
 
-connection.on("close", () => {
-    console.log("Disconnected from RabbitMQ.");
-    process.exit(0);
-});
+  const emailQueue = new EmailConsumer();
+  const tradeQueue = new TradeConsumer();
+  const notificationQueue = new NotificationConsumer();
+  const clientQueue = new ClientConsumer();
 
-const emailQueue = new EmailQueueListener();
-const tradeQueue = new TradeQueueListener();
-const notificationQueue = new NotificationQueueListener();
-const clientQueue = new ClientQueueListener();
+  emailQueue.consume();
+  notificationQueue.consume();
+  clientQueue.consume();
+  tradeQueue.consume();
+}
 
-emailQueue.listen();
-notificationQueue.listen();
-clientQueue.listen();
-tradeQueue.listen();
+main();

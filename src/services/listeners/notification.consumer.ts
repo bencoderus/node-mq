@@ -1,14 +1,14 @@
 import { IAmqpConnectionManager } from "amqp-connection-manager/dist/esm/AmqpConnectionManager";
 import { ConsumeMessage } from "amqplib";
-import { RMQConnection } from "../rabbitmq-connection";
 import { RMQMessage } from "../rabbitmq-message";
-import { BaseListener } from "./base.listener";
+import { RMQConsumer } from "./base.consumer";
 
-export class EmailQueueListener extends BaseListener {
-  public queue = "email-queue";
+export class NotificationConsumer extends RMQConsumer {
+  public queue = "notification-queue";
+  public exchanges = ["lagos", "rio"];
 
-  public listen() {
-    const channel = this.getChannel();
+  public async consume() {
+    const channel = await this.getChannel();
 
     channel.consume((consumeMessage: ConsumeMessage) => {
       const messageReceived = new RMQMessage(consumeMessage);
@@ -17,9 +17,5 @@ export class EmailQueueListener extends BaseListener {
 
       channel.ack(consumeMessage);
     });
-  }
-
-  protected connection(): IAmqpConnectionManager {
-    return RMQConnection.getConnection();
   }
 }

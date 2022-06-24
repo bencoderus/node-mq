@@ -5,6 +5,7 @@ import { EmailSent } from "./services/events/email-sent.event";
 import { NotificationSent } from "./services/events/notification.event";
 import { ClientCreated } from "./services/events/client-created.event";
 import { TradeExecuted } from "./services/events/trade-executed.event";
+import { RMQConnect } from "./services/rabbit-mq.connect";
 const app = express();
 
 app.use(express.json());
@@ -57,13 +58,15 @@ app.get("/email", async (req: Request, res: Response) => {
   res.send("Email sent to consumers of the queue.");
 });
 
-app.listen(3000, () => {
-  const connection = RMQConnection.getConnection();
-
-  connection.on("disconnect", () => {
-    console.log("Disconnected from RabbitMQ.");
-    process.exit(0);
-  });
+app.listen(3000, async () => {
+  try {
+    await RMQConnect.connect({
+      username: "webdev",
+      password: "webdev",
+    });
+  } catch (error) {
+    console.log(error);
+  }
 
   console.log("Connected to HTTP server!");
 });

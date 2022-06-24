@@ -1,13 +1,11 @@
-import { IAmqpConnectionManager } from "amqp-connection-manager/dist/esm/AmqpConnectionManager";
-import { RMQConnection } from "../rabbitmq-connection";
-import { BaseEvent } from "./base.event";
+import { RMQEvent } from "./base.event";
 
 type ClientPayload = {
   id: number | string;
   name: string;
 };
 
-export class ClientCreated extends BaseEvent {
+export class ClientCreated extends RMQEvent {
   public event = "client-created";
   public exchange = "lagos";
 
@@ -15,9 +13,5 @@ export class ClientCreated extends BaseEvent {
     const payload = this.buildPayload(message);
 
     await this.emit(payload);
-  }
-
-  protected connection(): IAmqpConnectionManager {
-    return RMQConnection.getConnection();
   }
 }

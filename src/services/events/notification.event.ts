@@ -1,12 +1,10 @@
-import { IAmqpConnectionManager } from "amqp-connection-manager/dist/esm/AmqpConnectionManager";
-import { RMQConnection } from "../rabbitmq-connection";
-import { BaseEvent } from "./base.event";
+import { RMQEvent } from "./base.event";
 
 type NotificationPayload = {
   message: string;
 };
 
-export class NotificationSent extends BaseEvent {
+export class NotificationSent extends RMQEvent {
   public event = "notification-sent";
   public queue = "notification-queue";
 
@@ -14,9 +12,5 @@ export class NotificationSent extends BaseEvent {
     const payload = this.buildPayload(message);
 
     await this.emit(payload);
-  }
-
-  protected connection(): IAmqpConnectionManager {
-    return RMQConnection.getConnection();
   }
 }
