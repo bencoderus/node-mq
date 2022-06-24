@@ -4,7 +4,7 @@ import { RMQConsumer } from "./base.consumer";
 
 export class TradeConsumer extends RMQConsumer {
   public queue = "trade-queue";
-  public exchanges = ["lagos", "rio"];
+  public exchanges = ["client_created"];
 
   public async consume() {
     const channel = await this.getChannel();

@@ -1,6 +1,5 @@
 import * as express from "express";
 import { Request, Response } from "express";
-import { RMQConnection } from "./services/rabbitmq-connection";
 import { EmailSent } from "./services/events/email-sent.event";
 import { NotificationSent } from "./services/events/notification.event";
 import { ClientCreated } from "./services/events/client-created.event";

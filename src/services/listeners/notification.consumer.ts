@@ -5,7 +5,7 @@ import { RMQConsumer } from "./base.consumer";
 
 export class NotificationConsumer extends RMQConsumer {
   public queue = "notification-queue";
-  public exchanges = ["lagos", "rio"];
+  public exchanges = ["client_created"];
 
   public async consume() {
     const channel = await this.getChannel();
