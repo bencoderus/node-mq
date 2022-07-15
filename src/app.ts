@@ -59,9 +59,17 @@ app.get("/email", async (req: Request, res: Response) => {
 
 app.listen(3000, async () => {
   try {
-    await RMQConnect.connect({
+    const mqConnection = await RMQConnect.connect({
       username: "webdev",
       password: "webdev",
+    });
+
+    process.on("SIGINT", () => mqConnection.close());
+    process.on("SIGTERM", () => mqConnection.close());
+
+    mqConnection.on("disconnect", (error) => {
+      console.log(error);
+      process.exit(0);
     });
   } catch (error) {
     console.log(error);
