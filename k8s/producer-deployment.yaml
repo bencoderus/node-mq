@@ -1,40 +1,36 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: node-mq-producer-deployment
+  name: nodemq-producer-deployment
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: node-mq-producer
+      app: nodemq-producer
   template:
     metadata:
       labels:
-        app: node-mq-producer
+        app: nodemq-producer
     spec:
       containers:
-      - name: node-mq-producer
+      - name: nodemq-producer
         imagePullPolicy: Never
-        image: bencoderus/node-mq
+        image: bencoderus/nodemq
         env:
           - name: RABBITMQ_USERNAME
             valueFrom:
               secretKeyRef:
-                name: node-mq-secret
+                name: nodemq-secret
                 key: RABBITMQ_USERNAME
           - name: RABBITMQ_PASSWORD
             valueFrom:
               secretKeyRef:
-                name: node-mq-secret
+                name: nodemq-secret
                 key: RABBITMQ_PASSWORD
           - name: RABBITMQ_HOST
-            value: node-mq-rabbitmq-service
+            value: nodemq-rabbitmq-service
           - name: RABBITMQ_PORT
             value: "5672"
-        resources:
-          limits:
-            memory: "512Mi"
-            cpu: "100m"
         command:
         - yarn
         - run
@@ -46,11 +42,11 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: node-mq-producer-service
+  name: nodemq-producer-service
 spec:
   type: LoadBalancer
   selector:
-    app: node-mq-producer
+    app: nodemq-producer
   ports:
   - port: 3000
     targetPort: 3000

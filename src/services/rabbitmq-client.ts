@@ -253,9 +253,11 @@ export class RMQClient {
     const bindings = [];
 
     this.exchanges.forEach(function (exchange) {
-      bindings.push(channel.assertQueue(queue));
+      bindings.push(channel.assertQueue(queue, { durable: true }));
 
-      bindings.push(channel.assertExchange(exchange, exchangeType));
+      bindings.push(
+        channel.assertExchange(exchange, exchangeType, { durable: true })
+      );
 
       bindings.push(channel.prefetch(1));
 

@@ -1,10 +1,11 @@
-import { ConsumeMessage } from "amqplib";
+import { Channel, ConsumeMessage } from "amqplib";
 import { ChannelWrapper } from "amqp-connection-manager";
+import { RMQClient } from "./rabbitmq-client";
 
 export class RMQMessage {
   private readonly _messageBody: any;
 
-  constructor(private message: ConsumeMessage) {
+  constructor(private channel: RMQClient, private message: ConsumeMessage) {
     this._messageBody = this.parseMessage();
   }
 
@@ -13,8 +14,8 @@ export class RMQMessage {
    *
    * @param {ChannelWrapper} channel - The channel that the message was received on.
    */
-  public ack(channel: ChannelWrapper): void {
-    channel.ack(this.message);
+  public ack(): void {
+    this.channel.ack(this.message);
   }
 
   /**

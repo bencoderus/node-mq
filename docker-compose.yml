@@ -4,7 +4,7 @@ services:
   producer:
     container_name: producer
     build: .
-    image: bencoderus/node-mq
+    image: bencoderus/nodemq
     ports:
       - "3000:3000"
     environment:
@@ -19,12 +19,12 @@ services:
     volumes:
       - ./:/app
     networks:
-      - node-mq-net
+      - nodemq-net
 
   consumer:
     container_name: consumer
     build: .
-    image: bencoderus/node-mq
+    image: bencoderus/nodemq
     environment:
       - RABBITMQ_HOST=rabbitmq
       - RABBITMQ_PORT=5672
@@ -37,7 +37,7 @@ services:
     volumes:
       - ./:/app
     networks:
-      - node-mq-net
+      - nodemq-net
 
   rabbitmq:
     container_name: rabbitmq
@@ -49,7 +49,7 @@ services:
       - RABBITMQ_DEFAULT_USER=webdev
       - RABBITMQ_DEFAULT_PASS=webdev
     networks:
-      - node-mq-net
+      - nodemq-net
     volumes:
       - rabbit-mq-data:/var/lib/rabbitmq
 
@@ -58,5 +58,5 @@ volumes:
 
 
 networks:
-  node-mq-net:
+  nodemq-net:
     driver: bridge

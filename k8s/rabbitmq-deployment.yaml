@@ -1,34 +1,30 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: node-mq-rabbitmq-deployment
+  name: nodemq-rabbitmq-deployment
 spec:
   selector:
     matchLabels:
-      app: node-mq-rabbitmq
+      app: nodemq-rabbitmq
   template:
     metadata:
       labels:
-        app: node-mq-rabbitmq
+        app: nodemq-rabbitmq
     spec:
       containers:
-      - name: node-mq-rabbitmq
+      - name: nodemq-rabbitmq
         image: rabbitmq:3.10.5-management-alpine
         env:
           - name: RABBITMQ_DEFAULT_USER
             valueFrom:
               secretKeyRef:
-                name: node-mq-secret
+                name: nodemq-secret
                 key: RABBITMQ_USERNAME
           - name: RABBITMQ_DEFAULT_PASS
             valueFrom:
               secretKeyRef:
-                name: node-mq-secret
+                name: nodemq-secret
                 key: RABBITMQ_PASSWORD
-        resources:
-          limits:
-            memory: "128Mi"
-            cpu: "100m"
         ports:
         - containerPort: 5672
         - containerPort: 15672
@@ -37,11 +33,11 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: node-mq-rabbitmq-service
+  name: nodemq-rabbitmq-service
 spec:
   type: ClusterIP
   selector:
-    app: node-mq-rabbitmq
+    app: nodemq-rabbitmq
   ports:
   - port: 5672
     targetPort: 5672

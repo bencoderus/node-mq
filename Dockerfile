@@ -2,9 +2,7 @@ FROM node:16.13-alpine
 
 WORKDIR /app
 
-COPY . .
-COPY package*.json ./
-
+COPY package.json ./
+COPY yarn.lock ./
 RUN yarn
-
-EXPOSE 3000
+COPY . ./

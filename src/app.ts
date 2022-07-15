@@ -4,7 +4,7 @@ import { EmailSent } from "./services/events/email-sent.event";
 import { NotificationSent } from "./services/events/notification.event";
 import { ClientCreated } from "./services/events/client-created.event";
 import { TradeExecuted } from "./services/events/trade-executed.event";
-import { RMQConnect } from "./services/rabbit-mq.connect";
+import { RMQConnect } from "@liquidator/common";
 const app = express();
 
 app.use(express.json());
@@ -60,6 +60,7 @@ app.get("/email", async (req: Request, res: Response) => {
 app.listen(3000, async () => {
   try {
     await RMQConnect.connect({
+      host: process.env.RABBITMQ_HOST || "localhost",
       username: "webdev",
       password: "webdev",
     });
@@ -67,5 +68,5 @@ app.listen(3000, async () => {
     console.log(error);
   }
 
-  console.log("Connected to HTTP server!");
+  console.log("Connected to HTTP server..");
 });

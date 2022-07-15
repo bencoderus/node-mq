@@ -1,20 +1,13 @@
-import { ConsumeMessage } from "amqplib";
-import { RMQMessage } from "../rabbitmq-message";
-import { RMQConsumer } from "./base.consumer";
+import { RMQMessage, RMQListener } from "@liquidator/common";
 
-export class ClientConsumer extends RMQConsumer {
+export class ClientConsumer extends RMQListener {
   public queue = "client-queue";
   public exchanges = ["lagos"];
 
-  public async consume() {
-    const channel = await this.getChannel();
-
-    channel.consume((consumeMessage: ConsumeMessage) => {
-      const messageReceived = new RMQMessage(consumeMessage);
-
-      console.log(messageReceived.event(), messageReceived.payload());
-
-      channel.ack(consumeMessage);
+  public async listen(): Promise<void> {
+    this.consume((message: RMQMessage) => {
+      console.log(message.event(), message.payload());
+      message.ack();
     });
   }
 }

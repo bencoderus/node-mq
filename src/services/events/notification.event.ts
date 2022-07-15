@@ -1,4 +1,4 @@
-import { RMQEvent } from "./base.event";
+import { RMQEvent } from "@liquidator/common";
 
 type NotificationPayload = {
   message: string;

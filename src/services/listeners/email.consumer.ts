@@ -1,21 +1,12 @@
-import { IAmqpConnectionManager } from "amqp-connection-manager/dist/esm/AmqpConnectionManager";
-import { ConsumeMessage } from "amqplib";
-import { RMQConnect } from "../rabbit-mq.connect";
-import { RMQMessage } from "../rabbitmq-message";
-import { RMQConsumer } from "./base.consumer";
+import { RMQMessage, RMQListener } from "@liquidator/common";
 
-export class EmailConsumer extends RMQConsumer {
+export class EmailConsumer extends RMQListener {
   public queue = "email-queue";
 
-  public async consume() {
-    const channel = await this.getChannel();
-
-    channel.consume((consumeMessage: ConsumeMessage) => {
-      const messageReceived = new RMQMessage(consumeMessage);
-
-      console.log(messageReceived.event(), messageReceived.payload());
-
-      channel.ack(consumeMessage);
+  public async listen(): Promise<void> {
+    this.consume((message: RMQMessage) => {
+      console.log(message.event(), message.payload());
+      message.ack();
     });
   }
 }
