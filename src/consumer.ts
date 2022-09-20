@@ -1,12 +1,10 @@
-import { ClientConsumer } from "./services/listeners/client.consumer";
-import { EmailConsumer } from "./services/listeners/email.consumer";
-import { NotificationConsumer } from "./services/listeners/notification.consumer";
-import { TradeConsumer } from "./services/listeners/trade.consumer";
+import { NotificationListener } from "./services/listeners/notification.listener";
+import { PostListener } from "./services/listeners/post.listener";
 import { RMQConnect } from "./services/rabbit-mq.connect";
 
 async function main() {
   try {
-    const connection = await RMQConnect.connect({
+    await RMQConnect.connect({
       username: "webdev",
       password: "webdev",
     });
@@ -16,15 +14,11 @@ async function main() {
   }
   console.log("Waiting for message");
 
-  const emailQueue = new EmailConsumer();
-  const tradeQueue = new TradeConsumer();
-  const notificationQueue = new NotificationConsumer();
-  const clientQueue = new ClientConsumer();
+  const notificationListener = new NotificationListener();
+  notificationListener.consume();
 
-  emailQueue.consume();
-  notificationQueue.consume();
-  clientQueue.consume();
-  tradeQueue.consume();
+  const postListener = new PostListener();
+  postListener.consume();
 }
 
 main();

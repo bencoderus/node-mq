@@ -3,7 +3,7 @@ import { ConsumeMessage } from "amqplib";
 import { RMQConnect } from "../rabbit-mq.connect";
 import { RMQClient } from "../rabbitmq-client";
 
-export abstract class RMQConsumer {
+export abstract class RMQListener {
   public abstract queue: string;
   protected exchanges: string[];
   private _connection: IAmqpConnectionManager;

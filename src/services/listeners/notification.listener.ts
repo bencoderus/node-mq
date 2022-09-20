@@ -1,10 +1,10 @@
 import { ConsumeMessage } from "amqplib";
 import { RMQMessage } from "../rabbitmq-message";
-import { RMQConsumer } from "./base.consumer";
+import { RMQListener } from "./base.listener";
 
-export class TradeConsumer extends RMQConsumer {
-  public queue = "trade-queue";
-  public exchanges = ["client_created"];
+export class NotificationListener extends RMQListener {
+  public queue = "notification_queue";
+  public exchanges = ["user_created"];
 
   public async consume() {
     const channel = await this.getChannel();
