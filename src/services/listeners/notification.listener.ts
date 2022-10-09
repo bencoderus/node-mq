@@ -4,7 +4,7 @@ import { RMQListener } from "./base.listener";
 
 export class NotificationListener extends RMQListener {
   public queue = "notification_queue";
-  public exchanges = ["user_created"];
+  public events = ["user_created"];
 
   public async consume() {
     const channel = await this.getChannel();

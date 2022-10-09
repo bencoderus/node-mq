@@ -11,7 +11,6 @@ type PublisherPayload = {
 export abstract class RMQEvent {
   protected abstract event: string;
   protected queue: string;
-  protected exchange: string;
   private _connection: IAmqpConnectionManager;
 
   /**
@@ -29,14 +28,18 @@ export abstract class RMQEvent {
   /**
    * It takes a payload, publishes it to the channel, and returns the payload.
    *
-   * @param {PublisherPayload} body - The payload to be sent to the queue.
+   * @param any body - The payload to be sent to the queue.
    *
    * @returns The body of the message.
    */
-  public async emit(body: PublisherPayload) {
+  public async send(body: any) {
     const channel = await this.getChannel();
 
-    await channel.publish(body);
+    await channel.publish(body, {
+      headers: {
+        event: this.event,
+      },
+    });
 
     return body;
   }
@@ -79,9 +82,7 @@ export abstract class RMQEvent {
     const connection = await this.getConnection();
     let messageBroker = new RMQClient(connection);
 
-    if (this.exchange) {
-      messageBroker.setExchange(this.exchange);
-    }
+    messageBroker.setExchange(this.event);
 
     if (this.queue) {
       messageBroker.setQueue(this.queue);
@@ -95,19 +96,5 @@ export abstract class RMQEvent {
    */
   protected connection() {
     return RMQConnect.connection;
-  }
-
-  /**
-   * It takes a message and returns a payload.
-   *
-   * @param {any} message - The message to be published.
-   *
-   * @returns An object with two properties: event and payload.
-   */
-  protected buildPayload(message: any): PublisherPayload {
-    return {
-      event: this.event,
-      payload: message,
-    };
   }
 }

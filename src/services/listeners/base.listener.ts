@@ -5,7 +5,7 @@ import { RMQClient } from "../rabbitmq-client";
 
 export abstract class RMQListener {
   public abstract queue: string;
-  protected exchanges: string[];
+  protected events: string[];
   private _connection: IAmqpConnectionManager;
 
   /**
@@ -37,8 +37,8 @@ export abstract class RMQListener {
     const connection = await this.getConnection();
     let messageBroker = new RMQClient(connection);
 
-    if (Array.isArray(this.exchanges) && this.exchanges.length > 0) {
-      messageBroker.setExchanges(this.exchanges);
+    if (Array.isArray(this.events) && this.events.length > 0) {
+      messageBroker.setExchanges(this.events);
     }
 
     return messageBroker.setQueue(this.queue);

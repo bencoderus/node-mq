@@ -6,12 +6,9 @@ type EventPayload = {
 };
 
 export class UserCreated extends RMQEvent {
-  public event = "user:created";
-  public exchange = "user_created";
+  public event = "user_created";
 
   public async publish(message: EventPayload): Promise<void> {
-    const payload = this.buildPayload(message);
-
-    await this.emit(payload);
+    return this.send(message);
   }
 }

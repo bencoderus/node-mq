@@ -4,7 +4,7 @@ import { RMQListener } from "./base.listener";
 
 export class PostListener extends RMQListener {
   public queue = "post_queue";
-  public exchanges = ["user_created", "user_updated"];
+  public events = ["user_created", "user_updated"];
 
   public async consume() {
     const channel = await this.getChannel();

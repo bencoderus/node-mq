@@ -24,10 +24,9 @@ export class RMQMessage {
    * @returns The event property of the message body.
    */
   public event(): string {
-    return typeof this._messageBody !== "string" &&
-      this._messageBody.hasOwnProperty("event")
-      ? this._messageBody.event
-      : "";
+    const headers = this.headers();
+
+    return headers.hasOwnProperty('event') ? headers.event : null;
   }
 
   /**
@@ -37,10 +36,7 @@ export class RMQMessage {
    * @returns The payload of the message.
    */
   public payload(): any {
-    return typeof this._messageBody !== "string" &&
-      this._messageBody.hasOwnProperty("payload")
-      ? this._messageBody.payload
-      : "";
+    return this._messageBody;
   }
   /**
    * It returns the raw body of the message.
