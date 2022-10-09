@@ -251,10 +251,10 @@ export class RMQClient {
     exchangeType: string
   ) {
     const bindings = [];
+    
+    bindings.push(channel.assertQueue(queue));
 
     this.exchanges.forEach(function (exchange) {
-      bindings.push(channel.assertQueue(queue));
-
       bindings.push(channel.assertExchange(exchange, exchangeType));
 
       bindings.push(channel.prefetch(1));
