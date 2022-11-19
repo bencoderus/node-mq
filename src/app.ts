@@ -5,6 +5,8 @@ import { UserUpdated } from "./services/events/user-updated.event";
 import { RMQConnect } from "./services/rabbit-mq.connect";
 const app = express();
 
+const port = process.env.APP_PORT ? parseInt(process.env.APP_PORT, 10) : 3000;
+
 app.use(express.json());
 
 app.get("/hello", (req: Request, res: Response) => {
@@ -36,6 +38,7 @@ app.get("/publish", async (req: Request, res: Response) => {
 const listen = async () => {
   const connectionData = {
     username: "webdev",
+    host: process.env.RABBITMQ_HOST || "localhost",
     password: "webdev",
     maxRetries: 12,
     delayInSeconds: 5,
@@ -44,7 +47,7 @@ const listen = async () => {
 
   try {
     const mqConnection = await RMQConnect.connectUntil(connectionData);
-    app.listen(3000);
+    app.listen(port);
 
     process.on("SIGINT", () => mqConnection.close());
     process.on("SIGTERM", () => mqConnection.close());

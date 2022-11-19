@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
       - name: node-mq-producer
-        imagePullPolicy: Never
+        imagePullPolicy: IfNotPresent
         image: bencoderus/node-mq
         env:
           - name: RABBITMQ_USERNAME
@@ -29,18 +29,16 @@ spec:
                 key: RABBITMQ_PASSWORD
           - name: RABBITMQ_HOST
             value: node-mq-rabbitmq-service
+          - name: APP_PORT
+            value: "3000"
           - name: RABBITMQ_PORT
             value: "5672"
-        resources:
-          limits:
-            memory: "512Mi"
-            cpu: "100m"
         command:
         - yarn
         - run
         - start
         ports:
-        - containerPort: 3000
+        - containerPort: 80
 
 ---
 apiVersion: v1

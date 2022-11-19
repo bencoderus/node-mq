@@ -1,0 +1,10 @@
+build:
+  node-mq-producer-deployment:
+    image: bencoderus/node-mq
+    context: .
+dev:
+  node-mq-producer-deployment:
+    sync:
+      - .:/app
+deploy:
+  - kubectl apply -f k8s && kubectl apply -f k8s/prod

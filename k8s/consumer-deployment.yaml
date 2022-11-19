@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
       - name: node-mq-consumer
-        imagePullPolicy: Never
+        imagePullPolicy: IfNotPresent
         image: bencoderus/node-mq
         env:
           - name: RABBITMQ_USERNAME
@@ -35,7 +35,3 @@ spec:
         - yarn
         - run
         - consume
-        resources:
-          limits:
-            memory: "512Mi"
-            cpu: "100m"

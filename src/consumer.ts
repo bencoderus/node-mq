@@ -3,11 +3,19 @@ import { PostListener } from "./services/listeners/post.listener";
 import { RMQConnect } from "./services/rabbit-mq.connect";
 
 async function main() {
+  console.log(process.env.RABBITMQ_HOST || "localhost");
+
   try {
-    await RMQConnect.connect({
+    const connectionData = {
       username: "webdev",
+      host: process.env.RABBITMQ_HOST || "localhost",
       password: "webdev",
-    });
+      maxRetries: 12,
+      delayInSeconds: 5,
+      logger: console,
+    };
+
+    await RMQConnect.connect(connectionData);
   } catch (error) {
     console.log(error);
     process.exit(0);

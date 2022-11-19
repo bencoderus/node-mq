@@ -25,10 +25,6 @@ spec:
               secretKeyRef:
                 name: node-mq-secret
                 key: RABBITMQ_PASSWORD
-        resources:
-          limits:
-            memory: "128Mi"
-            cpu: "100m"
         ports:
         - containerPort: 5672
         - containerPort: 15672

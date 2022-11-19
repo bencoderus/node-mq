@@ -7,4 +7,4 @@ COPY package*.json ./
 
 RUN yarn
 
-EXPOSE 3000
+EXPOSE 80
